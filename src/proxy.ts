@@ -1,5 +1,5 @@
 interface TargetObject {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const target: Record<string, unknown> = {};
@@ -9,8 +9,18 @@ const target: Record<string, unknown> = {};
  */
 const handler: ProxyHandler<TargetObject> = {
   // proxy의 set을 handler에서 overriding 하고 있는 것(객체 속성에 값을 할당하는 모든 시도를 가로채고 싶을 때)
-  set: () => {
-    throw new Error("please don't set properties on this object");
+  set: (target, key, value, receiver) => {
+    /**
+     * target - new Proxy의 target 객체
+     * key - property key
+     * value - property value
+     * receiver - get의 receiver와 유사하게 동작하는 객체
+     */
+    if (typeof value !== 'string') console.log('[error] - 문자열을 입력해주세요.');
+
+    if (value === 'pink') throw new Error('pink는 안되요!');
+
+    return receiver;
   },
 };
 

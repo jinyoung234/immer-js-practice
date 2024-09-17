@@ -3,7 +3,16 @@ interface TargetObject {
 }
 
 const target: Record<string, unknown> = {};
-const handler: ProxyHandler<TargetObject> = {};
+
+/**
+ * handler 객체는 해당 메서드들을 통해 proxy 객체의 모든 내부 메서드들을 오버라이드할 수 있다.
+ */
+const handler: ProxyHandler<TargetObject> = {
+  // proxy의 set을 handler에서 overriding 하고 있는 것(객체 속성에 값을 할당하는 모든 시도를 가로채고 싶을 때)
+  set: () => {
+    throw new Error("please don't set properties on this object");
+  },
+};
 
 /**
  * [proxy의 동작 방식]
@@ -15,6 +24,3 @@ const proxy: TargetObject = new Proxy(target, handler);
 
 // example 1
 proxy.color = 'pink';
-
-// proxy에 특정 필드에 값을 추가하면, target에도 그대로 전달된다.
-console.log(target.color);
